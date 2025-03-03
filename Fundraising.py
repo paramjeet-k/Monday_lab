@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 class FundRaising:
-    def _init_(self, company_name, project_cost):
+    def __init__(self, company_name, project_cost):
         self.company_name = company_name
         self.project_cost = project_cost
         self.funds_raised = 0
