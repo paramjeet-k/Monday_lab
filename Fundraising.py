@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 class FundRaising:
-    def __init__(self, company_name, project_cost):
+    def _init_(self, company_name, project_cost):
         self.company_name = company_name
         self.project_cost = project_cost
         self.funds_raised = 0
@@ -33,8 +33,18 @@ class FundRaising:
         return raised
 
     def plot_fund_split(self):
-        labels = self.fund_sources.keys()
-        values = self.fund_sources.values()
+        labels = []
+        values = []
+        
+        for key, value in self.fund_sources.items():
+            if value > 0:
+                labels.append(key)
+                values.append(value)
+        
+        if sum(values) == 0:
+            st.warning("No funds raised yet! Please add funds to view the pie chart.")
+            return
+        
         plt.figure(figsize=(8, 8))
         plt.pie(values, labels=labels, autopct='%1.1f%%', startangle=140, colors=['#ff9999','#66b3ff','#99ff99','#ffcc99'])
         plt.title(f"Fundraising Split for {self.company_name}")
@@ -51,7 +61,9 @@ st.title("Mining Project Fundraising Calculator")
 company_name = st.text_input("Enter Company Name:")
 project_cost = st.number_input("Enter Total Project Cost (INR):", min_value=0.0, format="%.2f")
 
-fund_raising = FundRaising(company_name, project_cost)
+if "fund_raising" not in st.session_state:
+    st.session_state.fund_raising = FundRaising(company_name, project_cost)
+fund_raising = st.session_state.fund_raising
 
 st.write("## Select a Method to Raise Funds")
 method_choice = st.radio("Choose a funding method:", ("IPO", "Private Equity", "Debt", "Preference Shares"))
