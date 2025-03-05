@@ -8,9 +8,12 @@ class FundRaising:
         self.project_cost = project_cost
         self.funds_raised = 0
         self.fund_sources = {'IPO': 0, 'Private Equity': 0, 'Debt': 0, 'Preference Shares': 0}
-        self.financing_costs = {'Debt Interest': 0, 'Equity Dilution': 0}
+        self.financing_costs = {'Debt Interest': 0, 'Equity Dilution': 0, 'Debt EMI (Monthly)': 0, 'Total Debt Repayment': 0}
 
     def calculate_debt_emi(self, loan_amount, interest_rate, years):
+        if loan_amount == 0:
+            return 0, 0
+        
         monthly_rate = (interest_rate / 100) / 12
         months = years * 12
         if monthly_rate > 0:
@@ -24,9 +27,13 @@ class FundRaising:
     def raise_funds(self, ipo_amount, pe_percentage, pe_amount, debt_amount, debt_rate, debt_years, ps_amount):
         remaining_needed = self.project_cost - self.funds_raised
         
+        # Ensure Private Equity does not exceed % limit of project cost
+        pe_limit = (pe_percentage / 100) * self.project_cost
+        pe_amount = min(pe_amount, pe_limit)
+        
         funding_options = [
             ('IPO', ipo_amount),
-            ('Private Equity', min(pe_amount, (pe_percentage / 100) * self.project_cost)),
+            ('Private Equity', pe_amount),
             ('Debt', debt_amount),
             ('Preference Shares', ps_amount)
         ]
