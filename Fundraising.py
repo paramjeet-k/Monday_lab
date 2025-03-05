@@ -5,7 +5,7 @@ import numpy as np
 class FundRaising:
     def __init__(self, company_name, project_cost):
         self.company_name = company_name
-        self.project_cost = project_cost
+        self.project_cost = project_cost if project_cost > 1 else 0  # Ensure project cost is correctly set
         self.funds_raised = 0
         self.fund_sources = {'IPO': 0, 'Private Equity': 0, 'Debt': 0, 'Preference Shares': 0}
         self.financing_costs = {'Debt Interest': 0, 'Equity Dilution': 0, 'Debt EMI (Monthly)': 0, 'Total Debt Repayment': 0}
@@ -29,6 +29,8 @@ class FundRaising:
         self.fund_sources = {'IPO': 0, 'Private Equity': 0, 'Debt': 0, 'Preference Shares': 0}  # Reset fund sources
         
         remaining_needed = self.project_cost
+        if remaining_needed <= 0:
+            return  # Exit if project cost is not set correctly
         
         # Ensure Private Equity does not exceed % limit of project cost
         pe_limit = (pe_percentage / 100) * self.project_cost
@@ -65,7 +67,7 @@ class FundRaising:
 
 st.title("Mining Project Fundraising & Cost Calculator")
 company_name = st.text_input("Enter Company Name:")
-project_cost = st.number_input("Enter Total Project Cost (INR):", min_value=1.0, format="%.2f")
+project_cost = st.number_input("Enter Total Project Cost (INR):", min_value=1.0, value=1000000.0, format="%.2f")
 
 if "fund_raising" not in st.session_state or st.session_state.fund_raising.company_name != company_name:
     st.session_state.fund_raising = FundRaising(company_name, project_cost)
