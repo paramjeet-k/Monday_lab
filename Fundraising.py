@@ -16,15 +16,17 @@ class FundRaising:
         return raised
 
     def private_equity(self, equity_percentage, investment_amount):
-        raised = investment_amount * (equity_percentage / 100)
+        raised = (equity_percentage / 100) * self.project_cost  # Now scaled to project cost
+        raised = min(raised, investment_amount)  # Ensure it does not exceed investment amount
         self.funds_raised += raised
         self.fund_sources['Private Equity'] += raised
         return raised
 
-    def debt(self, loan_amount, interest_rate, years):
-        self.funds_raised += loan_amount
-        self.fund_sources['Debt'] += loan_amount
-        return loan_amount
+    def debt(self, loan_amount):
+        raised = min(loan_amount, self.project_cost - self.funds_raised)  # Limit to remaining funds
+        self.funds_raised += raised
+        self.fund_sources['Debt'] += raised
+        return raised
 
     def preference_shares(self, number_of_shares, price_per_share):
         raised = number_of_shares * price_per_share
@@ -82,10 +84,8 @@ elif method_choice == "Private Equity":
 
 elif method_choice == "Debt":
     loan_amount = st.number_input("Enter Loan Amount (INR):", min_value=0.0, format="%.2f")
-    interest_rate = st.number_input("Enter Interest Rate (%):", min_value=0.0, format="%.2f")
-    years = st.number_input("Enter Loan Tenure (Years):", min_value=1, format="%d")
     if st.button("Raise Funds via Debt"):
-        fund_raising.debt(loan_amount, interest_rate, years)
+        fund_raising.debt(loan_amount)
 
 elif method_choice == "Preference Shares":
     number_of_shares = st.number_input("Enter Number of Preference Shares:", min_value=0, format="%d")
