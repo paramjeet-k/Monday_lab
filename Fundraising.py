@@ -18,7 +18,7 @@ class FundRaising:
         else:
             emi = loan_amount / months
         total_payment = emi * months
-        self.financing_costs['Debt Interest'] += total_payment - loan_amount
+        self.financing_costs['Debt Interest'] = total_payment - loan_amount
         return emi, total_payment
 
     def raise_funds(self, ipo_amount, pe_percentage, pe_amount, debt_amount, debt_rate, debt_years, ps_amount):
@@ -55,7 +55,7 @@ class FundRaising:
 
 st.title("Mining Project Fundraising & Cost Calculator")
 company_name = st.text_input("Enter Company Name:")
-project_cost = st.number_input("Enter Total Project Cost (INR):", min_value=0.0, format="%.2f")
+project_cost = st.number_input("Enter Total Project Cost (INR):", min_value=1.0, format="%.2f")
 
 if "fund_raising" not in st.session_state or st.session_state.fund_raising.company_name != company_name:
     st.session_state.fund_raising = FundRaising(company_name, project_cost)
@@ -72,7 +72,8 @@ ps_amount = st.number_input("Maximum Preference Shares Amount (INR):", min_value
 
 if st.button("Calculate Fundraising Plan"):
     fund_raising.raise_funds(ipo_amount, pe_percentage, pe_amount, debt_amount, debt_rate, debt_years, ps_amount)
-    
+    st.session_state.fund_raising = fund_raising  # Ensure session state is updated
+
 st.write(f"### Total Funds Raised: {fund_raising.funds_raised:.2f} INR")
 remaining_funds = project_cost - fund_raising.funds_raised
 if remaining_funds > 0:
