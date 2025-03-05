@@ -25,7 +25,10 @@ class FundRaising:
         return emi, total_payment
 
     def raise_funds(self, ipo_amount, pe_percentage, pe_amount, debt_amount, debt_rate, debt_years, ps_amount):
-        remaining_needed = self.project_cost - self.funds_raised
+        self.funds_raised = 0  # Reset funds raised before calculation
+        self.fund_sources = {'IPO': 0, 'Private Equity': 0, 'Debt': 0, 'Preference Shares': 0}  # Reset fund sources
+        
+        remaining_needed = self.project_cost
         
         # Ensure Private Equity does not exceed % limit of project cost
         pe_limit = (pe_percentage / 100) * self.project_cost
